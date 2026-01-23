@@ -28,4 +28,18 @@ class DevController extends Controller
     public function test()
     {
     }
+
+    /**
+     * Возвращает текущие настройки подключения к DummyJSON.
+     *
+     * @return array
+     */
+    public function getDummyConfig(): array
+    {
+        return [
+            'base_url' => config('services.dummyjson.base_url'),
+            'username' => config('services.dummyjson.username'),
+            'password' => config('services.dummyjson.password')
+        ];
+    }
 }
