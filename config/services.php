@@ -5,7 +5,7 @@
  */
 
 return [
-    'dummy_json' => [
+    'dummyjson' => [
         'base_url' => env('DUMMY_JSON_BASE_URL', 'https://dummyjson.com'),
         'username' => env('DUMMY_JSON_USERNAME', ''),
         'password' => env('DUMMY_JSON_PASSWORD', ''),
