@@ -22,4 +22,4 @@ Route::middleware('auth')->group(function () {
 /**
  * Проекты
  */
-Route::resource('projects', ProjectController::class);
+Route::middleware('access')->resource('projects', ProjectController::class);
