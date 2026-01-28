@@ -6,12 +6,37 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
+    private $projects;
+
+    public function __construct(){
+        $this->projects = collect([
+            [
+                'id' => 1,
+                'title' => 'Тестовый проект 1', 
+                'onwer_id' => 1, 
+                'is_active' => true, 
+                'created_at' => '2026-01-28 10:57:13', 
+                'assignee_id' => 1, 
+                'deadline_date' => '2026-01-30'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Тестовый проект 2', 
+                'onwer_id' => 1, 
+                'is_active' => false, 
+                'created_at' => '2026-01-28 11:30:46', 
+                'assignee_id' => 1, 
+                'deadline_date' => '2026-02-02'
+            ],
+        ]);
+    }
+        
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return 'Список проектов';
+        return view('pages.Project.index', ['projects' => $this->projects]);
     }
 
     /**
@@ -19,7 +44,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return 'Создать новый проект';
+        return view('pages.Project.create');
     }
 
     /**
@@ -27,7 +52,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        return 'Сохранение проекта';
+        return redirect()->route('projects.index', ['access' => 'yes']);
     }
 
     /**
@@ -35,7 +60,12 @@ class ProjectController extends Controller
      */
     public function show(string $id)
     {
-        return "Страница проекта: {$id}";
+        $project = $this->projects->firstWhere('id', $id);
+
+        if (empty($project))
+            abort(404);
+        
+        return view('pages.Project.show', ['project' => $project]);
     }
 
     /**
@@ -43,7 +73,12 @@ class ProjectController extends Controller
      */
     public function edit(string $id)
     {
-        return "Редактирование проекта {$id}";
+        $project = $this->projects->firstWhere('id', $id);
+
+        if (empty($project))
+            abort(404);
+        
+        return view('pages.Project.edit', ['project' => $project]);
     }
 
     /**
@@ -51,7 +86,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        return "Сохранение редактирования проекта {$id}";
+        return redirect()->route('projects.show', ['project' => $id, 'access' => 'yes']);
     }
 
     /**
