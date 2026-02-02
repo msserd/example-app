@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -65,5 +66,25 @@ class User extends Authenticatable
             });
 
         return $query;
+    }
+
+    /**
+     * Проекты, которыми владеет пользователь
+     *
+     * @return HasMany
+     */
+    public function ownedProjects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'owner_id');
+    }
+
+    /**
+     * Проекты, за которые ответственен пользователь
+     *
+     * @return HasMany
+     */
+    public function assignedProjects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'assignee_id');
     }
 }
