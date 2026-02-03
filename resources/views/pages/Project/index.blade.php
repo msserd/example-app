@@ -7,6 +7,7 @@
                 {{ $project->title }}
                 <a href="{{ route('projects.show', ['project' => $project->id, 'access' => 'yes']) }}">Просмотр</a>
                 <a href="{{ route('projects.edit', ['project' => $project->id, 'access' => 'yes']) }}">Редактировать</a>
+                <x-button-delete :project_id="$project->id" />
             </div>
         </li>
     @endforeach

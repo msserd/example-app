@@ -4,23 +4,42 @@
     @method('put')
     <div>
         <div>Название</div>
-        <input type="text" name="title" value="{{ $project->title }}">
+        <input type="text" name="title" value="{{ old('title', $project->title) }}">
+        @error('title') <div style="color: red; font-size: 10px;">{{ $message }}</div> @enderror
     </div>
     <div>
         <div>Активность</div>
-        <input type="checkbox" name="is_active" {{ $project->is_active ? 'checked' : ''}}>
+        <input type="checkbox" name="is_active" @checked(old('is_active', $project->is_active))>
+        @error('is_active') <div style="color: red; font-size: 10px;">{{ $message }}</div> @enderror
+    </div>
+    <div>
+        <div>Владелец</div>
+        <select name="owner_id">
+            <option value="">Выберите пользователя</option>
+            @if ($users->isNotEmpty())
+                @foreach ($users as $user)
+                    <option value="{{ $user->id }}" @selected(old('owner_id', $project->owner_id) == $user->id)>{{ $user->username }}</option>
+                @endforeach
+            @endif
+        </select>
+        @error('owner_id') <div style="color: red; font-size: 10px;">{{ $message }}</div> @enderror
     </div>
     <div>
         <div>Ответственный</div>
         <select name="assignee_id">
             <option value="">Выберите пользователя</option>
-            <option value="1" {{ $project->assignee_id == "1" ? 'selected' : '' }}>Admin</option>
-            <option value="2" {{ $project->assignee_id == "2" ? 'selected' : '' }}>User1</option>
+            @if ($users->isNotEmpty())
+                @foreach ($users as $user)
+                    <option value="{{ $user->id }}" @selected(old('assignee_id', $project->assignee_id) == $user->id)>{{ $user->username }}</option>
+                @endforeach
+            @endif
         </select>
+        @error('assignee_id') <div style="color: red; font-size: 10px;">{{ $message }}</div> @enderror
     </div>
     <div>
         <div>Дедлайн</div>
-        <input type="date" name="deadline_date" value="{{ $project->deadline_date }}"/>
+        <input type="date" name="deadline_date" value="{{ old('deadline_date', $project->deadline_date) }}"/>
+        @error('deadline_date') <div style="color: red; font-size: 10px;">{{ $message }}</div> @enderror
     </div>
     <button type="submit">Сохранить</button>
 </form>

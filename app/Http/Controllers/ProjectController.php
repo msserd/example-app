@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\User;
+use App\Http\Requests\Project\ProjectRequest;
 
 class ProjectController extends Controller
 {  
@@ -12,7 +14,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::orderBy('created_at')->get();
         return view('pages.Project.index', ['projects' => $projects]);
     }
 
@@ -21,14 +23,18 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('pages.Project.create');
+        $users = User::all();
+        
+        return view('pages.Project.create', ['users' => $users]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProjectRequest $request)
     {
+        Project::create($request->validated());
+
         return redirect()->route('projects.index', ['access' => 'yes']);
     }
 
@@ -45,22 +51,28 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('pages.Project.edit', ['project' => $project]);
+        $users = User::all();
+
+        return view('pages.Project.edit', ['project' => $project, 'users' => $users]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project $project)
+    public function update(ProjectRequest $request, Project $project)
     {
+        $project->update($request->validated());
+
         return redirect()->route('projects.show', ['project' => $project->id, 'access' => 'yes']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Project $project)
     {
-        return "Удаление проекта {$id}";
+        $project->delete();
+
+        return redirect()->route('projects.index', ['access' => 'yes']);
     }
 }
