@@ -12,18 +12,6 @@
         @error('is_active') <div style="color: red; font-size: 10px;">{{ $message }}</div> @enderror
     </div>
     <div>
-        <div>Владелец</div>
-        <select name="owner_id">
-            <option value="">Выберите пользователя</option>
-            @if ($users->isNotEmpty())
-                @foreach ($users as $user)
-                    <option value="{{ $user->id }}" @selected(old('owner_id') == $user->id)>{{ $user->username }}</option>
-                @endforeach
-            @endif
-        </select>
-        @error('owner_id') <div style="color: red; font-size: 10px;">{{ $message }}</div> @enderror
-    </div>
-    <div>
         <div>Ответственный</div>
         <select name="assignee_id">
             <option value="">Выберите пользователя</option>

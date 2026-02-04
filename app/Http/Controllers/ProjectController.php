@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\User;
 use App\Http\Requests\Project\ProjectRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {  
@@ -33,7 +35,11 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-        Project::create($request->validated());
+        $data = array_merge($request->validated(), [
+            'owner_id' => Auth::user()->id,
+        ]);
+        
+        Project::create($data);
 
         return redirect()->route('projects.index', ['access' => 'yes']);
     }
@@ -51,6 +57,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        Gate::authorize('edit', $project);
+        
         $users = User::all();
 
         return view('pages.Project.edit', ['project' => $project, 'users' => $users]);
@@ -61,6 +69,8 @@ class ProjectController extends Controller
      */
     public function update(ProjectRequest $request, Project $project)
     {
+        Gate::authorize('update', $project);
+
         $project->update($request->validated());
 
         return redirect()->route('projects.show', ['project' => $project->id, 'access' => 'yes']);
@@ -71,6 +81,8 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        Gate::authorize('delete', $project);
+
         $project->delete();
 
         return redirect()->route('projects.index', ['access' => 'yes']);

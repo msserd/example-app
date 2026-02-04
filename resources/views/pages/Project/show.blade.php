@@ -19,5 +19,11 @@
 @endif
 
 <a href="{{ route('projects.index', ['access' => 'yes']) }}">Вернуться к списку</a>
-<a href="{{ route('projects.edit', ['project' => $project->id, 'access' => 'yes']) }}">Редактировать</a>
-<x-button-delete :project_id="$project->id" />
+
+@can('edit', $project)
+    <a href="{{ route('projects.edit', ['project' => $project->id, 'access' => 'yes']) }}">Редактировать</a>
+@endcan
+
+@can('delete', $project)
+    <x-button-delete :project_id="$project->id" />
+@endcan

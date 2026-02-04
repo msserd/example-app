@@ -24,7 +24,6 @@ class ProjectRequest extends FormRequest
         return [
             'title'       => ['required', 'string', 'max:255'],
             'is_active'   => ['nullable', 'boolean'],
-            'owner_id' => ['required', 'exists:users,id'],
             'assignee_id' => ['nullable', 'exists:users,id'],
             'deadline_date'    => ['nullable', 'date', 'after:today'],
         ];
@@ -50,21 +49,8 @@ class ProjectRequest extends FormRequest
         return [
             'title.required'    => 'Введите название проекта.',
             'title.max'    => 'Название должно быть меньше 256 символов.',
-            'owner_id.exists'   => 'Выбранный пользователь не существует.',
             'assignee_id.exists'   => 'Выбранный пользователь не существует.',
             'deadline_date.after'    => 'Дедлайн должен быть датой в будущем.',
-        ];
-    }
-
-    /**
-     * Изменение атрибутов
-     *
-     * @return array
-     */
-    public function attributes(): array
-    {
-        return [
-            'owner_id' => 'владелец',
         ];
     }
 }
