@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\User;
 use Carbon\Carbon;
 use Faker\Factory as Faker;
-use Illuminate\Database\Eloquent\Collection;
 
 class DevController extends Controller
 {
@@ -113,5 +114,42 @@ class DevController extends Controller
             'assignee_id' => $faker->randomElement($users),
             'deadline_date' => $faker->dateTimeBetween('now', '+2 months')->format('Y-m-d'),
         ]);
+    }
+
+    /**
+     * Получение трех последних проектов
+     * 
+     * @return Collection
+     */
+    public function getMyLatestThree(): Collection
+    {
+        $query = Project::query();
+
+        if (Auth::check()) 
+            $query->where('owner_id', Auth::user()->id);
+
+        return $query->latest()->limit(3)->get();
+    }
+
+    /**
+     * Получение списка пользователей и количество их проектов
+     * 
+     * @return Collection
+     */
+    public function usersProjects(): Collection
+    {
+        return User::select('username')
+            ->withCount('ownedProjects')
+            ->get();
+    }
+
+    /**
+     * Получение количества проектов с истекшим дедлайном
+     * 
+     * @return int
+     */
+    public function getExpiredProjectsCount(): int
+    {
+        return Project::expired()->count();
     }
 }

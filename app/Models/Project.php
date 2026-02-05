@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class Project extends Model
 {
@@ -36,5 +38,17 @@ class Project extends Model
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assignee_id');
+    }
+
+    /**
+     * Scope для фильтрации проектов с истекшим дедлайном.
+     * 
+     * @param Builder $query
+     * 
+     * @return Builder
+     */
+    public function scopeExpired(Builder $query): Builder
+    {
+        return $query->where('deadline_date', '<', Carbon::today()->toDateString());
     }
 }
