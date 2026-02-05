@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Project;
+use App\Models\User;
+use Carbon\Carbon;
+use Faker\Factory as Faker;
+use Illuminate\Database\Eloquent\Collection;
 
 class DevController extends Controller
 {
@@ -41,5 +46,72 @@ class DevController extends Controller
             'username' => config('services.dummyjson.username'),
             'password' => config('services.dummyjson.password')
         ];
+    }
+
+    /**
+     * Добавление 5 случайных проектов
+     * 
+     * @return void
+     */
+    public function addProject(): void
+    {
+        $faker = Faker::create();
+        $users = User::pluck('id')->toArray();
+
+        for ($i = 0; $i < 5; $i++) {
+            Project::create([
+                'title' => $faker->sentence(3),
+                'owner_id' => $faker->randomElement($users),
+                'is_active' => $faker->boolean(),
+                'assignee_id' => $faker->randomElement($users),
+                'deadline_date' => $faker->dateTimeBetween('now', '+2 months')->format('Y-m-d'),
+            ]);
+        }
+    }
+
+    /**
+     * Получение проектов админов
+     * 
+     * @return Collection
+     */
+    public function getAdminProjects(): Collection
+    {
+        return Project::whereHas('owner', function ($query) {
+            $query->where('role', 'admin');
+        })
+        ->with('owner')
+        ->get();
+    }
+
+    /**
+     * Получение проектов с истекшим дедлайном
+     * 
+     * @return Collection
+     */
+    public function getExpired(): Collection
+    {
+        return Project::where('deadline_date', '<', Carbon::today()->toDateString())
+            ->orderBy('deadline_date', 'asc')
+            ->get();
+    }
+
+    /**
+     * Обновление полей одного случайного проекта на случайные данные
+     * 
+     * @return void
+     */
+    public function updateRandom(): void
+    {
+        $faker = Faker::create();
+        $project = Project::inRandomOrder()->first();
+        $users = User::pluck('id')->toArray();
+
+        $project->update([
+            'title' => $faker->sentence(3),
+            'owner_id' => $faker->randomElement($users),
+            'is_active' => $faker->boolean(),
+            'assignee_id' => $faker->randomElement($users),
+            'deadline_date' => $faker->dateTimeBetween('now', '+2 months')->format('Y-m-d'),
+        ]);
     }
 }
